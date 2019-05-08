@@ -79,15 +79,19 @@ for vp = 1 : length(subdir_list)
     % Feature extraction and classification
     fv = proc_jumpingMeans(epo, ival_cfy{vp});
     
+%     computes size so that epoch(s) are not lost
     xsz= size(fv.x);
     fvsz= [prod(xsz(1:end-1)) xsz(end)];
     fv_x = reshape(fv.x, fvsz);
+    
+%     Transpose to have features in columns
     fv_x_t = transpose(fv_x);
     
     fv_y_t = transpose(fv.y);
     
     fv_x_y_t = [fv_x_t fv_y_t];
     
+%     saves in the working directory
     csvwrite(strcat(subdir_list{vp}, '.csv'), fv_x_y_t);
     
     [loss(vp), losssem(vp)] = crossvalidation(fv, @train_RLDAshrink, 'SampleFcn', {@sample_KFold, [10 10]});
